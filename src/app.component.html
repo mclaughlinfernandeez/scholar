@@ -1,0 +1,79 @@
+<main class="min-h-screen w-full flex flex-col items-center justify-center p-4 bg-slate-900 font-sans">
+  @switch (state().status) {
+    @case ('initial') {
+      <app-file-uploader 
+        (fileUploaded)="onDataFileUploaded($event)" 
+        (knowledgeUploaded)="onKnowledgeFileUploaded($event)" />
+    }
+    @case ('comparing') {
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-400 mx-auto"></div>
+        <h2 class="mt-6 text-2xl font-semibold text-slate-200">Comparing {{ state().fileName }}...</h2>
+        <p class="mt-2 text-slate-400">Comparing against GRCh38 reference genome and compressing results.</p>
+      </div>
+    }
+    @case ('comparisonReady') {
+      <div class="w-full max-w-2xl p-8 space-y-6 bg-slate-800 rounded-xl shadow-lg border border-slate-700 text-center">
+        <svg class="mx-auto h-12 w-12 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 class="text-3xl font-bold text-sky-400">Comparison Complete</h2>
+        <p class="text-slate-400">
+          A compressed comparison file (VCF.GZ) has been generated for
+          <strong>{{ state().fileName }}</strong>. You can download it now or proceed to the next step.
+        </p>
+        <div class="flex justify-center space-x-4 pt-4">
+          <button (click)="downloadComparisonFile()" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition-colors">
+            Download Results
+          </button>
+          <button (click)="onContinueToAnalysis()" class="inline-flex items-center justify-center px-6 py-3 border border-sky-500 text-base font-medium rounded-md shadow-sm text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 transition-colors">
+            Continue to AI Report &rarr;
+          </button>
+        </div>
+      </div>
+    }
+    @case ('analyzing') {
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-400 mx-auto"></div>
+        <h2 class="mt-6 text-2xl font-semibold text-slate-200">Analyzing {{ state().fileName }}...</h2>
+        <p class="mt-2 text-slate-400">Our AI is extracting key insights from your data.</p>
+      </div>
+    }
+    @case ('fetchingSources') {
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-400 mx-auto"></div>
+        <h2 class="mt-6 text-2xl font-semibold text-slate-200">Finding Relevant Research...</h2>
+        <p class="mt-2 text-slate-400">Searching NIH GWAS Catalog and Semantic Scholar.</p>
+      </div>
+    }
+    @case ('sourcesReady') {
+      <app-source-selector 
+        [sources]="state().sources" 
+        (generateReport)="onGenerateReport($event)" />
+    }
+    @case ('generatingReport') {
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-400 mx-auto"></div>
+        <h2 class="mt-6 text-2xl font-semibold text-slate-200">Generating Your Report...</h2>
+        <p class="mt-2 text-slate-400">This may take a moment. The AI is synthesizing a comprehensive document.</p>
+      </div>
+    }
+    @case ('reportReady') {
+      <app-report-viewer 
+        [reportContent]="state().report"
+        (startOver)="onStartOver()" />
+    }
+    @case ('error') {
+      <div class="text-center p-8 bg-slate-800 rounded-lg shadow-lg border border-red-500/50">
+        <svg class="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <h2 class="mt-4 text-2xl font-semibold text-red-400">An Error Occurred</h2>
+        <p class="mt-2 text-slate-300">{{ state().message }}</p>
+        <button (click)="onStartOver()" class="mt-6 px-4 py-2 text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 transition-colors">
+            Try Again
+        </button>
+      </div>
+    }
+  }
+</main>

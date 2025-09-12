@@ -1,0 +1,7 @@
+{
+  "name": "Genomic Research Synthesizer",
+  "description": "Upload genomic data files (txt, csv, gz, vcf) and optional knowledge JSON to perform semantic analysis, find matching research from NIH and Semantic Scholar, and generate a comprehensive DOCX report using AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

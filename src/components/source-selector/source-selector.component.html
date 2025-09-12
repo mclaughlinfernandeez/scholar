@@ -1,0 +1,101 @@
+<div class="w-full max-w-4xl p-8 bg-slate-800 rounded-xl shadow-lg border border-slate-700">
+  <div class="text-center mb-6">
+    <h2 class="text-3xl font-bold text-sky-400">Select Research Sources</h2>
+    <p class="mt-2 text-slate-400">Choose the most relevant GWAS findings and papers to include in your report.</p>
+  </div>
+  
+  <!-- Voice Assistant UI -->
+  <div class="mb-8 p-4 rounded-lg bg-slate-900/50 border border-slate-700 flex items-center space-x-4">
+    <button (click)="toggleVoiceCommand()" class="relative flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center transition-colors"
+            [class.bg-sky-500]="!voiceService.isListening()"
+            [class.hover:bg-sky-600]="!voiceService.isListening()"
+            [class.bg-red-500]="voiceService.isListening()"
+            [class.hover:bg-red-600]="voiceService.isListening()">
+      @if (voiceService.isListening()) {
+        <span class="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping"></span>
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 3a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H7a2 2 0 01-2-2V3z"></path><path d="M15 8a5 5 0 11-10 0v1a5 5 0 0110 0V8zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path></svg>
+      } @else {
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93V17h-2v-2.07A8.01 8.01 0 012 8V7a1 1 0 011-1h2a1 1 0 011 1v1a5 5 0 0010 0V7a1 1 0 011-1h2a1 1 0 011 1v1a8.01 8.01 0 01-5 6.93z" clip-rule="evenodd"></path></svg>
+      }
+    </button>
+    <div class="flex-grow">
+        <p class="text-sm text-slate-300">{{ assistantMessage() }}</p>
+        @if (transcript()) {
+          <p class="text-xs text-slate-500 italic mt-1">{{ transcript() }}</p>
+        }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @for (source of sources(); track source.id; let i = $index) {
+      <div 
+        (click)="toggleSource(source.id)"
+        class="p-5 rounded-lg border-2 transition-all duration-200 cursor-pointer flex flex-col"
+        [class.border-sky-500]="selectedSources().has(source.id)"
+        [class.bg-slate-700]="selectedSources().has(source.id)"
+        [class.border-slate-600]="!selectedSources().has(source.id)"
+        [class.bg-slate-900/50]="!selectedSources().has(source.id)"
+        [class.hover:border-sky-600]="!selectedSources().has(source.id)"
+        [class.hover:bg-slate-800/60]="!selectedSources().has(source.id)"
+      >
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="flex items-center space-x-3">
+              <span class="text-lg font-bold text-slate-500">{{ i + 1 }}</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class.bg-blue-200]="source.type === 'GWAS'"
+                    [class.text-blue-800]="source.type === 'GWAS'"
+                    [class.bg-purple-200]="source.type === 'Semantic Scholar'"
+                    [class.text-purple-800]="source.type === 'Semantic Scholar'">
+                {{ source.type }}
+              </span>
+            </div>
+            <h3 class="mt-2 text-lg font-semibold text-slate-100">{{ source.title }}</h3>
+          </div>
+          <div class="flex-shrink-0 ml-3 h-5 w-5">
+            @if (selectedSources().has(source.id)) {
+              <svg class="h-5 w-5 text-sky-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            }
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-slate-400">{{ source.summary }}</p>
+
+        <div class="mt-4 flex-grow flex flex-col justify-end">
+            @if (source.type === 'GWAS' && source.markers && source.markers.length > 0) {
+              <div>
+                <h4 class="text-xs font-semibold text-slate-500 uppercase">Key Markers</h4>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  @for(marker of source.markers; track marker) {
+                    <span class="px-2 py-1 text-xs font-mono bg-slate-600 text-amber-300 rounded">{{ marker }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (source.type === 'Semantic Scholar' && source.authors && source.authors.length > 0) {
+              <div>
+                <h4 class="text-xs font-semibold text-slate-500 uppercase mt-3">Authors</h4>
+                <p class="text-sm text-slate-400 italic mt-1">{{ source.authors.join(', ') }}</p>
+              </div>
+            }
+
+          <a [href]="source.link" target="_blank" class="mt-4 inline-block text-sm text-sky-400 hover:text-sky-300">
+            View Source &rarr;
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="mt-10 text-center">
+    <button
+      (click)="onGenerateClick()"
+      [disabled]="selectedSources().size === 0"
+      class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 disabled:bg-slate-500 disabled:cursor-not-allowed transition-colors"
+    >
+      Generate Comprehensive Report
+    </button>
+  </div>
+</div>

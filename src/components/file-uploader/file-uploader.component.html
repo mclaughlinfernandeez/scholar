@@ -1,0 +1,49 @@
+<div class="w-full max-w-2xl p-8 space-y-8 bg-slate-800 rounded-xl shadow-lg border border-slate-700">
+  <div>
+    <h2 class="text-3xl font-bold text-center text-sky-400">Genomic Research Synthesizer</h2>
+    <p class="mt-2 text-center text-sm text-slate-400">
+      Upload your data to begin the AI-powered analysis.
+    </p>
+  </div>
+
+  <div class="space-y-6">
+    <!-- Main Data File Upload -->
+    <div>
+      <label for="data-file" class="block mb-2 text-sm font-medium text-slate-300">1. Upload Data File</label>
+      <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-md">
+        <div class="space-y-1 text-center">
+          <svg class="mx-auto h-12 w-12 text-slate-500" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div class="flex text-sm text-slate-400">
+            <label for="data-file-input" class="relative cursor-pointer bg-slate-700 rounded-md font-medium text-sky-400 hover:text-sky-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-slate-800 focus-within:ring-sky-500 px-2">
+              <span>Upload a file</span>
+              <input id="data-file-input" name="data-file-input" type="file" class="sr-only" accept=".txt,.csv,.gz,.vcf" (change)="onFileChange($event, 'data')">
+            </label>
+            <p class="pl-1">or drag and drop</p>
+          </div>
+          <p class="text-xs text-slate-500">TXT, CSV, GZ, VCF up to 10MB</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JSON Knowledge Upload -->
+    <div>
+      <label for="json-file" class="block mb-2 text-sm font-medium text-slate-300">2. Upload Existing Knowledge (Optional)</label>
+      <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-600 border-dashed rounded-md">
+        <div class="space-y-1 text-center">
+          <svg class="mx-auto h-12 w-12 text-slate-500" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <div class="flex text-sm text-slate-400">
+            <label for="knowledge-file-input" class="relative cursor-pointer bg-slate-700 rounded-md font-medium text-sky-400 hover:text-sky-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-slate-800 focus-within:ring-sky-500 px-2">
+              <span>Upload a JSON file</span>
+              <input id="knowledge-file-input" name="knowledge-file-input" type="file" class="sr-only" accept=".json" (change)="onFileChange($event, 'knowledge')">
+            </label>
+          </div>
+          <p class="text-xs text-slate-500">Valid JSON format</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
